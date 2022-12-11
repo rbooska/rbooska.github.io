@@ -21,7 +21,7 @@ timezone: Europe/Paris
 
 title: rbooska DevBlog                          # the main title
 
-tagline: Développeur dans le sud de la France   # it will display as the sub-title
+tagline: « WHITE RABBIT! WHITE RABBIT! »   # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
   A minimal, responsive, professionnal developpement blog for my technical context.
