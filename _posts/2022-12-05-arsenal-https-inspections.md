@@ -52,7 +52,7 @@ _it may not working all the time depending on the context_ :
 
 ## Static way
 
-Download the targeted app on [apkcombo.com](apkcombo.com) or alternative one.
+Download the targeted app on [apkcombo.com](https://apkcombo.com) or alternative one.
 
 1. Decompile
 : We'll using apktool
