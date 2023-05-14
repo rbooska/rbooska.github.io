@@ -11,7 +11,7 @@ A C x64 Win32 position-independent (PIC) reverse shell is executable code that c
 And creates a shell to execute commands on that machine.
 
 The PIC feature means code can be executed at any memory address without modification.
-
+ 
 With further experimentation I can get a assembly shellcode from this C code.
 Exemple with my custom shellcode generation tool (coded in java).
 
