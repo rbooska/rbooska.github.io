@@ -1,5 +1,5 @@
 ---
-title: Personnal Windows Study [#1]
+title: Personnal Windows Study
 categories: [win32, programming, study]
 tags: [lowlevel]
 ---

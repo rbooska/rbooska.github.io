@@ -454,3 +454,7 @@ The code thanks to position independent code ability can be extracted as a valid
 
 
 this is the end of this post, see you later on the web.
+
+### Credit
+
+- @hasherezade for dynamic PEB lookup
