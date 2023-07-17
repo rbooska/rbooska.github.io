@@ -1,6 +1,6 @@
 ---
 title: Position Independent Code x64 Win32 C implementation of reverse shell
-categories: [win32, programming, malware]
+categories: [programming, win32 , malware]
 tags: [lowlevel]
 ---
 

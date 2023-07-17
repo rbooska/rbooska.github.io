@@ -19,9 +19,9 @@ timezone: Europe/Paris
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: rbooska DevBlog                          # the main title
+title: rbooska                          # the main title
 
-tagline: « WHITE RABBIT! WHITE RABBIT! »   # it will display as the sub-title
+tagline: « random dude talking about hacking »   # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
   A minimal, responsive, professionnal developpement blog for my technical context.

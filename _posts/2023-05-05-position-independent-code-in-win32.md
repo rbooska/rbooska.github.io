@@ -1,6 +1,6 @@
 ---
 title: What is Position Independent Code ?
-categories: [win32, programming, study]
+categories: [programming, win32 , study]
 tags: [lowlevel]
 ---
 
