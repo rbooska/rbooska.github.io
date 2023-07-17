@@ -23,7 +23,9 @@ ___
     - Internal
     - External
 - Memory manipulation
+    - `TODO`
 - Hack the planet
+    - Important thing to know
     - Practical exemple
 - Code injection
 
