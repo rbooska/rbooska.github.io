@@ -87,7 +87,9 @@ ___
 {: .prompt-warning }
 
 1. **Scan all addresses** in memory with an unknown value 
-2. **Filter** value by increasing value or decreasing it **in game**.
+2. **Change** and **filter** value (by increasing, decreasing, change value or unchange it **in game** per scan.)
+    1. to increase value -> jump in the air _(or climb little bit)_
+    2. to decrease value -> wait until player fell back where he jumped _(or get down from there)_
 3. Once a address is found:
     1. Check if in game we see that we can freeze the value from memory tool
     2. Generate a pointermap with this address
