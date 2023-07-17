@@ -4,13 +4,7 @@ categories: [programming, win32 , study]
 tags: [lowlevel]
 ---
 
-# Wtf is that again
-
-I write this topic for explain what is and why is it important for me during my learning at windows low-level malware developpement (for virology study).
-
-____
-
-## What is Position Independent Code
+# What is Position Independent Code
 
 Position Independent Code (PIC) is machine code that can be executed independently of its location in memory. 
 
@@ -89,8 +83,8 @@ Here we use win32 api function to get relative address from OS library. As we ca
 So,
 
 - **pMessageBoxA** is a function pointer that points to the address of the **MessageBoxA** function.
-- `((int (WINAPI *)(HWND, LPCSTR, LPCSTR, UINT))pMessageBoxA)` is a cast of the function pointer to the appropriate function type. In other words, we're telling the compiler that pMessageBoxA is a pointer to a function that returns an int, takes four arguments `(HWND, LPCSTR, LPCSTR, UINT)`, and follows the **WINAPI** calling convention.
-- `(NULL, "Hello, World!", "Position Independent Code", MB_OK)` are the arguments we pass to the `MessageBoxA` function. `NULL` is the HWND (the parent window handle, here we don't have a parent window), `"Hello, World!"` is the message to display in the message box, `"Position Independent Code"` is the title of the message box, and `MB_OK` is a flag indicating that the message box should have an `"OK"` button.
+- `((int (WINAPI *)(HWND, LPCSTR, LPCSTR, UINT))pMessageBoxA)` is a cast of the function pointer to the appropriate function type. <br>In other words, we're telling the compiler that pMessageBoxA is a pointer to a function that returns an int, takes four arguments `(HWND, LPCSTR, LPCSTR, UINT)`, and follows the **WINAPI** calling convention.
+- `(NULL, "Hello, World!", "Position Independent Code", MB_OK)`<br>are the arguments we pass to the `MessageBoxA` function. <br>`NULL` is the HWND (the parent window handle, here we don't have a parent window), `"Hello, World!"` is the message to display in the message box, `"Position Independent Code"` is the title of the message box, and `MB_OK` is a flag indicating that the message box should have an `"OK"` button.
 
-Putting it all together, we call the `MessageBoxA` function with the supplied arguments using the `pMessageBoxA` function pointer. This allows the function to be called **position-independently**.
+Putting it all together, we call the `MessageBoxA` function with the supplied arguments using the `pMessageBoxA` function pointer. <br>This allows the function to be called **position-independently**.
 
