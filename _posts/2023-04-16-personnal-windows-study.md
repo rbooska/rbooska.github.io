@@ -34,39 +34,39 @@ Lets beginning with the classic GetProcAddress function reimplementation needed 
 // string comparaison
 int _strcmp(const char* str1, const char* str2)
 {
-	while (*str1 != '\0' && *str2 != '\0' && (*str1 == *str2)) {
-		str1++;
-		str2++;
-	}
+    while (*str1 != '\0' && *str2 != '\0' && (*str1 == *str2)) {
+        str1++;
+        str2++;
+    }
 
-	return (*str1 - *str2);
+    return (*str1 - *str2);
 }
 
 // reimplementation of GetProcAddress in kernel32.dll 
 // get a function pointer address by looping through ExportDirectory structure compairing function names.
 FARPROC GetProcAddressCustom(HMODULE hModule, const char* lpProcName)
 {
-	PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)hModule;
-	PIMAGE_NT_HEADERS pNtHeaders = (PIMAGE_NT_HEADERS)((LPBYTE)pDosHeader + pDosHeader->e_lfanew);
-	PIMAGE_EXPORT_DIRECTORY pExportDirectory = (PIMAGE_EXPORT_DIRECTORY)((LPBYTE)pDosHeader + pNtHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
+    PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)hModule;
+    PIMAGE_NT_HEADERS pNtHeaders = (PIMAGE_NT_HEADERS)((LPBYTE)pDosHeader + pDosHeader->e_lfanew);
+    PIMAGE_EXPORT_DIRECTORY pExportDirectory = (PIMAGE_EXPORT_DIRECTORY)((LPBYTE)pDosHeader + pNtHeaders->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
 
-	DWORD* pNames = (DWORD*)((LPBYTE)pDosHeader + pExportDirectory->AddressOfNames);
-	WORD* pOrdinals = (WORD*)((LPBYTE)pDosHeader + pExportDirectory->AddressOfNameOrdinals);
-	DWORD* pFunctions = (DWORD*)((LPBYTE)pDosHeader + pExportDirectory->AddressOfFunctions);
+    DWORD* pNames = (DWORD*)((LPBYTE)pDosHeader + pExportDirectory->AddressOfNames);
+    WORD* pOrdinals = (WORD*)((LPBYTE)pDosHeader + pExportDirectory->AddressOfNameOrdinals);
+    DWORD* pFunctions = (DWORD*)((LPBYTE)pDosHeader + pExportDirectory->AddressOfFunctions);
 
-	for (DWORD i = 0; i < pExportDirectory->NumberOfNames; ++i)
-	{
-		const char* pName = (const char*)((LPBYTE)pDosHeader + pNames[i]);
-		if (_strcmp(pName, lpProcName) == 0)
-		{
-			WORD wOrdinal = pOrdinals[i];
-			DWORD dwFuncRVA = pFunctions[wOrdinal];
-			FARPROC pFunction = (FARPROC)((LPBYTE)hModule + dwFuncRVA);
-			return pFunction;
-		}
-	}
+    for (DWORD i = 0; i < pExportDirectory->NumberOfNames; ++i)
+    {
+        const char* pName = (const char*)((LPBYTE)pDosHeader + pNames[i]);
+        if (_strcmp(pName, lpProcName) == 0)
+        {
+            WORD wOrdinal = pOrdinals[i];
+            DWORD dwFuncRVA = pFunctions[wOrdinal];
+            FARPROC pFunction = (FARPROC)((LPBYTE)hModule + dwFuncRVA);
+            return pFunction;
+        }
+    }
 
-	return NULL;
+    return NULL;
 }
 ```
 {: .nolineno }
