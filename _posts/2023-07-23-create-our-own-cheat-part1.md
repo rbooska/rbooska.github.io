@@ -297,7 +297,7 @@ ___
 #include "memory.h"
 #include "offsets.h"
 #include "cheat.h"
-#include "camera.h"	
+#include "camera.h"
 
 const wchar_t* module_name = L"Supraland-Win64-Shipping.exe";
 int cheat_speed_clock = 5;
@@ -402,7 +402,7 @@ int main()
             }
 
             if (GetAsyncKeyState('P') & 0x8000) {
-                printf("Blockng Z axis...");
+                printf("Blocking Z axis...");
                 while (true)
                 {
                     if (GetAsyncKeyState('O') & 0x8000)
