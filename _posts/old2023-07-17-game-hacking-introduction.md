@@ -31,6 +31,9 @@ ___
 
 # Game Hacking ?
 
+- [x] 📝 **WYSIWYG Markdown** - Write markdown in an elegant way
+
+
 > To understand this article at least, you need at least a knowledge base in the computer field called "system" so low level.
 {: .prompt-info }
 
