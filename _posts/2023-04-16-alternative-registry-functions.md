@@ -1,34 +1,30 @@
 ---
-title: Personnal Windows Study
+title: Alternative to ADVAPI32.dll registry functions
 categories: [programming, win32 , study]
 tags: [lowlevel]
 ---
-
-# Alternative to ADVAPI32.dll registry functions
-
 Hello folks !
 
 One days i've waking up with the idea to write up somes of my studies on Windows.
 
-This article is not intended for a specific audience. 
-
-and that's what I'm going to do, starting with the desire to test the registry functions present in the ntdll library in alternative to advapi32.dll
-
+Let's start testing the registry functions present in the ntdll library. It's can be a solid alternative to advapi32.dll usage.
 
 The goal is to respect somes rules. 
 We're going to follow these:
 - Dynamic call NT functions
   - using dynamic low level ntdll calls
-- Reimplement all needed functions
-  - including somes win32 functions
-- The less dependencies possible
-- Code in C (i've don't disable CRT but i don't gonna use it)
+- Reimplement all needed functions 
+  - **_strcmp()**
+  - **towlower()**
+  - **wcsicmp()**
+- Be the less dependencies possible
+- Code in C (**CRT** not disabled but don't gone use it)
 
 ___
 
 ## Dynamic api call on windows
 
-Lets beginning with the classic GetProcAddress function reimplementation needed for getting a function pointer here for our NT functions.
+Lets beginning with the classic **GetProcAddress** function reimplementation needed for getting a function pointer here for our NT functions.
 
 ```c
 // string comparaison
@@ -71,9 +67,9 @@ FARPROC GetProcAddressCustom(HMODULE hModule, const char* lpProcName)
 ```
 {: .nolineno }
 
-Right, here we have to use PE headers the module passed in parameter. So the purpose being loop in all functions and check their name by simple string comparaison.
+Right, here we have to use **PE headers** the module passed in parameter. So the purpose being loop in all functions and check their name by simple string comparaison.
 
-The structs used here are present when we use windows.h header, by the way here a exemple of ImageExportDirectory:
+The structs used here are present when we use **windows.**h header, by the way here a exemple of **ImageExportDirectory**:
 
 ```c
 // exemple of structure used (not needed to right)
@@ -102,9 +98,9 @@ GetModuleHandleExW(0, L"ntdll.dll", &ntdll);
 ```
 {: .nolineno }
 
-Like ntdll is loaded at runtime of any PE no need to load `ntdll.dll`.
+Like **ntdll** is loaded at runtime of any PE no need to load `ntdll.dll`.
 
-Instead of that we'll getting ntdll module handle dynamicly by reading the `PEB` *(Process Environnment Block)*. 
+Instead of that we'll getting **ntdll module handle** dynamicly by reading the `PEB` *(Process Environnment Block)*. 
 Which is located the current ntdll module handle if we make a little parse.
 
 lets begin with needed reimplementations
@@ -204,5 +200,33 @@ int main()
 > Here commented code to get ntdll module handle (x64) on Windows.
 {: .prompt-info }
 
+So, let's focus on main function:
 
-WIP....
+```c
+// Test
+int main()
+{
+    // get NTDLL HMODULE struct pointer that is a HANDLE in the eyes of windows
+    HMODULE hNtdll = GetNtdllModuleHandle();
+
+    // get the function pointer of the NtOpenKey function from ntdll.dll
+    LPVOID ntopenkey = GetProcAddressCustom(hNtdll, "NtOpenKey");
+
+    printf("ntdll.dll module handle: %p\n", hNtdll);
+    printf("ntdll.dll NtOpenKey pointer address: %p\n", ntopenkey);
+
+    // and so, you can use it dynamicly like this :
+    // src: http://undocumented.ntinternals.net/index.html?page=UserMode%2FUndocumented%20Functions%2FNT%20Objects%2FKey%2FNtOpenKey.html
+    ntopenkey(&baseKey, KEY_ALL_ACCESS /* 0xF003F */, &keyAttributes);
+
+    // baseKey and keyAttributes are intentionally not defined.
+    // The point of this article is to demonstrate how to dynamically call an undocumented function of the deep Win32 API.
+    return 0;
+}
+```
+{: .nolineno }
+
+
+Here we are folks ! Today you learnt how to get an **HANDLE** of the running **ntdll.dll** to obtain a **function pointer** for example with the function **NtOpenKey**.
+
+Thanks you for reading.

@@ -305,7 +305,7 @@ float xy_speed = 100.0f;
 float z_speed = 500.0f;
 
 
-
+// vide le buffer de la console, + fluide
 void cls()
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -438,5 +438,4 @@ int main()
 }
 ```
 
-# [Work in Progress]<br>...
-{:style="text-align: center;"}
+Voici une bonne petite base d'implémentation afin de jouer avec les coordonnées du joueur.

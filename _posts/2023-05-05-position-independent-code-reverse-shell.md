@@ -26,7 +26,18 @@ We need :
 - Dynamic PEB 
 - Dynamic resolve function (hidden from IAT)
 
-Typedef exemple with WSAStartup 
+>Windows portable executable contains a structure called Import Address Table (IAT) 
+>
+>IAT contains pointers to information that is critical for an executable to do its job: 
+- a list of DLLs it depends on for providing the expected functionality
+- a list of function names and their addresses from those DLLs that may be called by the binary at some point
+>
+>It is possible to hook function pointers specified in the IAT by overwriting the target function's address with a rogue function address and optionally to execute the originally intended function *(cf: ired.team)*
+{: .prompt-tip }
+
+___
+
+Typedef exemple with WSAStartup :
 ```c
 typedef int(WINAPI* WSAStartupFunc)(WORD, LPWSADATA);
 ```
@@ -429,6 +440,7 @@ In the other hand we'll need to start a tcp listener on host machine (attacker) 
 ```shell
 netcat -lvp 4444
 ```
+{: .nolineno }
 
 ![exemple 1](/assets/sh1.png)
 
@@ -437,6 +449,7 @@ starting the loader:
 ```shell
 loader.exe
 ```
+{: .nolineno }
 
 From our side we see a connection.
 

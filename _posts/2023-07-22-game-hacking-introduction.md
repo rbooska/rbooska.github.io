@@ -159,5 +159,5 @@ Et voilà comment obtenir la position GPS du personnage.
 
 C'était une introduction technique à de la manipulation mémoire dans un jeu vidéo.
 
-# [Work in Progress]<br>...
-{:style="text-align: center;"}
+[Suite à venir]<br>...
+{:style="text-align: center; font-size: 25px"}

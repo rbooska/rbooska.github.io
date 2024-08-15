@@ -21,7 +21,7 @@ timezone: Europe/Paris
 
 title: rbooska dev.blog                          # the main title
 
-tagline: « random dude talking about hacking »   # it will display as the sub-title
+tagline: « random dude talking about hacking and dev stuff »   # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
   A minimal, responsive, professionnal developpement blog for my technical context.
